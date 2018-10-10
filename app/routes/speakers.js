@@ -4,37 +4,45 @@ var router = express.Router();
 
 
 router.get('/speakers', function(request, response){
-    var info = "";
-    var dataFile = request.app.get('appData');
+    var data = request.app.get('appData');
+    var pagePhotos = [];
+    var pageSpeakers = data.speakers;
 
-    dataFile.speakers.forEach(element => {
-        info+= `
-            <li>
-                <h2>${element.name}</h2>
-                <img src="/images/speakers/${element.shortname}_tn.jpg" alt="speaker" style="height: 300px;">
-                <p>${element.summary}</p>
-            </li>  
-        `});
-    response.send(`
-        <link rel="stylesheet" type ="text/css" href="/css/style.css">
-        <h1>Reux Academy Meetups</h1>
-        ${info}
-    `);
+    data.speakers.forEach(element => {
+        pagePhotos = pagePhotos.concat(element.artwork);
+        
+    });
+
+
+    response.render('speakers', {
+            pageTitle: 'Speakers',
+            artwork: pagePhotos,
+            speakers: pageSpeakers,
+            pageID: 'speakerList'
+    });
 });
 
 router.get('/speakers/:speakerid', function(request, response){
+        var data = request.app.get('appData');
+        var pagePhotos = [];
+        var pageSpeakers = [];
     
-    var dataFile = request.app.get('appData');
-    var speaker = dataFile.speakers[request.params.speakerid];
+        data.speakers.forEach(element => {
+            if (element.shortname == request.params.speakerid){
+                pageSpeakers.push(element);
+                pagePhotos = pagePhotos.concat(element.artwork);
+            }
+            
+        });
+    
+    
+        response.render('speakers', {
+                pageTitle: 'Speaker Info',
+                artwork: pagePhotos,
+                speakers: pageSpeakers,
+                pageID: 'speakerDetail'
+        });
+    });
 
-    response.send(`
-        <link rel="stylesheet" type ="text/css" href="../css/style.css">
-        <h1>${speaker.title}</h1>
-        <h2>${speaker.name}</h2>
-        <img src="/images/speakers/${speaker.shortname}_tn.jpg" alt="speaker" style="height: 300px;">
-
-        <p>${speaker.summary}</p>
-    `);
-});
 
 module.exports = router;

@@ -10,10 +10,14 @@ app.set('view engine', 'ejs');
 app.set('views', 'app/views');
 
 app.locals.siteTitle = "Roux Meetups 2";
+app.locals.allSpeakers = dataFile.speakers;
 
 app.use(express.static('app/public'));
 app.use(require('./routes/index'));
 app.use(require('./routes/speakers'));
+app.use(require('./routes/feedback'));
+app.use(require('./routes/api'));
+
 
 var server = app.listen(app.get('port'), function(){
     console.log("listening on port: " + app.get('port'));
